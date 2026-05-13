@@ -9,12 +9,12 @@ router = APIRouter()
 
 
 @router.get("/locations", response_model=list[LocationResponse])
-async def list_locations(session: Session = Depends(get_session)):
+def list_locations(session: Session = Depends(get_session)):
     return location_service.get_all(session)
 
 
 @router.get("location/{id}", response_model=LocationResponse)
-async def list_by_id(id: int, session: Session = Depends(get_session)):
+def list_by_id(id: int, session: Session = Depends(get_session)):
     try:
         return location_service.get_location_by_id(session, id)
     except ValueError as e:
@@ -22,7 +22,7 @@ async def list_by_id(id: int, session: Session = Depends(get_session)):
 
 
 @router.post("/create_location", response_model=LocationCreate)
-async def create_location(
+def create_location(
     data: LocationCreate, session: Session = Depends(get_session)
 ):
     try:

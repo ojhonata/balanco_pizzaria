@@ -9,12 +9,12 @@ router = APIRouter()
 
 
 @router.get("/users", response_model=list[UserResponse])
-async def list_users(session: Session = Depends(get_session)):
+def list_users(session: Session = Depends(get_session)):
     return user_service.get_all(session)
 
 
-@router.get("/user", response_model=UserResponse)
-async def list_by_cs(cs: int, session: Session = Depends(get_session)):
+@router.get("/user/{cs}", response_model=UserResponse)
+def list_by_cs(cs: int, session: Session = Depends(get_session)):
     try:
         return user_service.get_user_by_cs(session, cs)
     except ValueError as e:
@@ -22,7 +22,7 @@ async def list_by_cs(cs: int, session: Session = Depends(get_session)):
 
 
 @router.post("/user_create", response_model=UserCreate)
-async def create_user(data: UserCreate, session: Session = Depends(get_session)):
+def create_user(data: UserCreate, session: Session = Depends(get_session)):
     try:
         return user_service.post_user(session, data)
     except ValueError as e:
@@ -30,8 +30,8 @@ async def create_user(data: UserCreate, session: Session = Depends(get_session))
 
 
 # está atualiuzando os outros campos mesma não enviando eles
-@router.put("/user_update/{cs}", response_model=UserResponse)
-async def update_user(
+@router.patch("/user_update/{cs}", response_model=UserResponse)
+def update_user(
     cs: int, data: UserUpdate, session: Session = Depends(get_session)
 ):
     try:

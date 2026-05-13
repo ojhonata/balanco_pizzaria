@@ -19,11 +19,11 @@ def create_sector(session: Session, data: SectorCreate) -> Sector:
 
     return sector
 
-def update_sector(session: Session, id: int, data: SectorUpdate) -> Sector:
+def update_sector(session: Session, id: int, data: SectorUpdate) -> Sector | None:
     sector = get_by_id(session, id)
 
     if not sector:
-        raise ValueError("Setor não encontrado")
+        return None
 
     if data.name is not None:
         sector.name = data.name

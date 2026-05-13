@@ -16,7 +16,7 @@ class User(ModelBase):
 
     name: orm.Mapped[str] = orm.mapped_column(sa.String(100), nullable=False)
     cs: orm.Mapped[int] = orm.mapped_column(sa.Integer, unique=True, nullable=False)
-    password: orm.Mapped[str] = orm.mapped_column(sa.String(10), nullable=False)
+    password: orm.Mapped[str] = orm.mapped_column(sa.String(8), nullable=False)
     role: orm.Mapped[str] = orm.mapped_column(sa.String(20), server_default="user")
 
     sector_id: orm.Mapped[int] = orm.mapped_column(

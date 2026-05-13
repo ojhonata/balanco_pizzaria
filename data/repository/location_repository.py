@@ -25,11 +25,11 @@ def create_location(session: Session, data: LocationCreate) -> Location:
     return location
 
 
-def update_location(session: Session, id: int, data: LocationUpdate) -> Location:
+def update_location(session: Session, id: int, data: LocationUpdate) -> Location | None:
     location = get_by_id(session, id)
 
     if not location:
-        raise ValueError("Localização não encontrada")
+        return None
 
     if data.name is not None:
         location.name = data.name

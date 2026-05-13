@@ -17,11 +17,11 @@ def create_shelf(session: Session, name: str) -> Shelf:
 
     return shelf
 
-def update_shelf(session: Session, id: int, name: str) -> Shelf:
+def update_shelf(session: Session, id: int, name: str) -> Shelf | None:
     shelf = get_by_id(session, id)
 
     if not shelf:
-        raise ValueError("Prateleira não encontrada")
+        return None
 
     shelf.name = name
 

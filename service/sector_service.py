@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from data.models.sector import Sector
@@ -6,7 +7,10 @@ from schemas.sector_schema import SectorCreate, SectorUpdate
 
 
 def get_all(session: Session) -> list[Sector]:
-    return sector_repository.get_all_sector(session)
+    try:
+        return sector_repository.get_all_sector(session)
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 def get_sector_by_id(session: Session, id: int) -> Sector:

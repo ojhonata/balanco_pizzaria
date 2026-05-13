@@ -9,12 +9,12 @@ router = APIRouter()
 
 
 @router.get("/shelves", response_model=list[ShlefResponse])
-async def list_shelfs(session: Session = Depends(get_session)):
+def list_shelfs(session: Session = Depends(get_session)):
     return shelf_service.get_all(session)
 
 
 @router.get("/shelf/{id}", response_model=ShlefResponse)
-async def list_by_id(id: int, session: Session = Depends(get_session)):
+def list_by_id(id: int, session: Session = Depends(get_session)):
     try:
         return shelf_service.get_shelf_by_id(session, id)
     except ValueError as e:
@@ -22,7 +22,7 @@ async def list_by_id(id: int, session: Session = Depends(get_session)):
 
 
 @router.post("/create_shelf", response_model=ShelfCreate)
-async def create_shelf(data: ShelfCreate, session: Session = Depends(get_session)):
+def create_shelf(data: ShelfCreate, session: Session = Depends(get_session)):
     try:
         return shelf_service.post_shelf(session, data)
     except ValueError as e:
@@ -30,7 +30,7 @@ async def create_shelf(data: ShelfCreate, session: Session = Depends(get_session
 
 
 @router.put("/update_shelf/{id}", response_model=ShelfUpdate)
-async def update_shelf(
+def update_shelf(
     id: int, data: ShelfUpdate, session: Session = Depends(get_session)
 ):
     try:

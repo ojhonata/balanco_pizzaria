@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -28,10 +30,21 @@ def get_user_by_cs(session: Session, cs: int) -> User:
     return user
 
 
+def get_user_by_id(session: Session, id: UUID) -> User:
+    user = user_repository.get_by_id(session, id)
+
+    if not user:
+        raise ValueError("Usuário não encontrado")
+    if not user.active:
+        raise ValueError("Usuário desativado")
+
+    return user
+
+
 def post_user(session: Session, data: UserCreate) -> User:
     existing_user = user_repository.get_by_cs(session, data.cs)
 
-    if len(str(data.password)) != 10:
+    if len(str(data.password)) != 8:
         raise ValueError("A senha precisa ter 10 caracteres")
 
     if len(str(data.cs)) != 6:
@@ -44,6 +57,8 @@ def post_user(session: Session, data: UserCreate) -> User:
 
 def update_user(session: Session, cs: int, data: UserUpdate) -> User:
     user = user_repository.get_by_cs(session, cs)
+    if len(str(data.cs)) != 6:
+        raise ValueError("cs precisa ter 6 caracteres")
 
     if not user:
         raise HTTPException(
