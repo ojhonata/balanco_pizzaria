@@ -1,11 +1,7 @@
 from fastapi import FastAPI
 
-from routers import (
-    location_routers,
-    material_router,
-    sector_routers,
-    shelf_routers,
-    type_routers,
+from app.api.v1 import location_routers, material_router, sector_routers, shelf_routers, type_routers
+from app.api.v1 import (
     user_routers,
 )
 
