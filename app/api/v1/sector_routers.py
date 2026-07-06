@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.conf.db_session import get_session
+from app.data.db_session import get_session
 from app.schemas.sector_schema import SectorCreate, SectorResponse, SectorUpdate
 from app.service import sector_service
 

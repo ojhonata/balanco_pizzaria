@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app.conf.db_session import get_session
+from app.data.db_session import get_session
 from app.schemas.materials_schema import MaterialCreate, MaterialResponse, MaterialUpdate
 from app.service import material_service
 
