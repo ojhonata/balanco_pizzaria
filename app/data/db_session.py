@@ -1,68 +1,41 @@
 import os
-from collections.abc import Generator
+from collections.abc import AsyncGenerator
 
-import sqlalchemy as sa
-from dotenv import load_dotenv
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from app.models.model_base import ModelBase
+from app.models.model_base import ModelBase # pyright: ignore
 
-load_dotenv()
-__engine: Engine | None = None
-__SessionLocal: sessionmaker[Session] | None = None
+DATABASE_URL = os.getenv("DATABASE_URL")
 
+if not DATABASE_URL:
+    raise ValueError("URL de conexão não encontrada")
 
 # config banco de dados
-def create_engine(sqlite: bool = False) -> Engine:
-    global __engine
-
-    if __engine is not None:
-        return __engine
-
-    conn_str = os.getenv("DATABASE_URL")
-    if conn_str is None:
-        raise ValueError("DATABASE_URL não definida no .env")
-    __engine = sa.create_engine(url=conn_str.strip(), echo=False)
-
-    return __engine
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=False,
+    future=True,
+    pool_pre_ping=True
+)
 
 
 # sessão para a conexão ao banco de dados
-def create_session() -> sessionmaker[Session]:
-    global __SessionLocal
-
-    if __SessionLocal is not None:
-        return __SessionLocal
-
-    __SessionLocal = sessionmaker(
-        bind=create_engine(),
-        expire_on_commit=False,
-        class_=Session,
-    )
-    return __SessionLocal
+async_session_factory = async_sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False,
+    autoflush=False
+)
 
 
 # Dependency para o FastAPI — use com Depends()
-def get_session() -> Generator[Session]:
-    factory = create_session()
-    session = factory()
-    try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
-
-
-def create_table() -> None:
-    global __engine
-
-    if not __engine:
-        create_engine()
-
-    import app.models.__all_models  # pyright: ignore  # noqa: F401
-    # ModelBase.metadata.drop_all(__engine)
-    ModelBase.metadata.create_all(__engine)
+async def get_db() -> AsyncGenerator[AsyncSession]:
+    async with async_session_factory() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+        finally:
+            await session.close()

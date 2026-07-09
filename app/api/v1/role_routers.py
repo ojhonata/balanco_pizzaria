@@ -2,21 +2,21 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.data.db_session import get_session
-from app.schemas.shelf_schema import ShelfCreate, ShelfUpdate, ShlefResponse
-from app.service import shelf_service
+from app.schemas.role_schema import ShelfCreate, ShelfUpdate, ShlefResponse
+from app.service import role_service
 
 router = APIRouter()
 
 
 @router.get("/shelves", response_model=list[ShlefResponse])
 def list_shelfs(session: Session = Depends(get_session)):
-    return shelf_service.get_all(session)
+    return role_service.get_all(session)
 
 
 @router.get("/shelf/{id}", response_model=ShlefResponse)
 def list_by_id(id: int, session: Session = Depends(get_session)):
     try:
-        return shelf_service.get_shelf_by_id(session, id)
+        return role_service.get_shelf_by_id(session, id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
@@ -24,7 +24,7 @@ def list_by_id(id: int, session: Session = Depends(get_session)):
 @router.post("/create_shelf", response_model=ShelfCreate)
 def create_shelf(data: ShelfCreate, session: Session = Depends(get_session)):
     try:
-        return shelf_service.post_shelf(session, data)
+        return role_service.post_shelf(session, data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -34,6 +34,6 @@ def update_shelf(
     id: int, data: ShelfUpdate, session: Session = Depends(get_session)
 ):
     try:
-        return shelf_service.update_shelf(session, id, data)
+        return role_service.update_shelf(session, id, data)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

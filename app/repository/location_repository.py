@@ -1,22 +1,22 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.location import Location
-from app.schemas.location_schema import LocationCreate, LocationUpdate
+from app.models.role import Role
+from app.schemas.category_schema import LocationCreate, LocationUpdate
 
 
-def get_all_location(session: Session) -> list[Location]:
-    return session.execute(select(Location)).scalars().all()  # pyright: ignore
+def get_all_location(session: Session) -> list[Role]:
+    return session.execute(select(Role)).scalars().all()  # pyright: ignore
 
 
-def get_by_id(session: Session, id: int) -> Location | None:
+def get_by_id(session: Session, id: int) -> Role | None:
     return session.execute(
-        select(Location).where(Location.id == id)
+        select(Role).where(Role.id == id)
     ).scalar_onr_or_one()  # pyright: ignore
 
 
-def create_location(session: Session, data: LocationCreate) -> Location:
-    location = Location(name=data.name, shlef=data.shelf_id)
+def create_location(session: Session, data: LocationCreate) -> Role:
+    location = Role(name=data.name, shlef=data.shelf_id)
 
     session.add(location)
     session.commit()
@@ -25,7 +25,7 @@ def create_location(session: Session, data: LocationCreate) -> Location:
     return location
 
 
-def update_location(session: Session, id: int, data: LocationUpdate) -> Location | None:
+def update_location(session: Session, id: int, data: LocationUpdate) -> Role | None:
     location = get_by_id(session, id)
 
     if not location:
@@ -38,5 +38,5 @@ def update_location(session: Session, id: int, data: LocationUpdate) -> Location
 
     return location
 
-def get_by_name(session: Session, name: str) -> Location | None:
-    return session.execute(select(Location).where(Location.name == name)).scalar_one_or_none() #pyright: ignore
+def get_by_name(session: Session, name: str) -> Role | None:
+    return session.execute(select(Role).where(Role.name == name)).scalar_one_or_none() #pyright: ignore

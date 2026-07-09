@@ -1,3 +1,5 @@
-import sqlalchemy.ext.declarative
+from sqlalchemy.orm import DeclarativeBase
 
-ModelBase = sqlalchemy.ext.declarative.declarative_base()
+
+class ModelBase(DeclarativeBase):
+    pass

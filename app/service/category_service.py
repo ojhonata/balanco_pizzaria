@@ -1,15 +1,15 @@
 from sqlalchemy.orm import Session
 
-from app.models.location import Location
+from app.models.role import Role
 from app.repository import location_repository
-from app.schemas.location_schema import LocationCreate
+from app.schemas.category_schema import LocationCreate
 
 
-def get_all(session: Session) -> list[Location]:
+def get_all(session: Session) -> list[Role]:
     return location_repository.get_all_location(session)
 
 
-def get_location_by_id(session: Session, id: int) -> list[Location]:
+def get_location_by_id(session: Session, id: int) -> list[Role]:
     location = location_repository.get_by_id(session, id)
 
     if not location:  # se localizacao nao foi encontrada
@@ -18,7 +18,7 @@ def get_location_by_id(session: Session, id: int) -> list[Location]:
     return location
 
 
-def post_location(session: Session, data: LocationCreate) -> Location:
+def post_location(session: Session, data: LocationCreate) -> Role:
     existing_location = location_repository.get_by_name(session, data.name)
 
     if existing_location:
