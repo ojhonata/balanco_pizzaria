@@ -7,7 +7,7 @@ from sqlalchemy import ForeignKey, orm
 from app.models.enums import Location, Type
 from app.models.material import Material
 from app.models.model_base import ModelBase
-from app.models.orders import Order
+from app.models.order import Order
 from app.models.sector import Sector
 from app.models.user import User
 
@@ -16,7 +16,7 @@ class Movement(ModelBase):
     __tablename__: str = "movements"
 
     id: orm.Mapped[uuid.UUID] = orm.mapped_column(
-        sa.UUID, primary_key=True, server_default=sa.func.gen_random_uuid()
+        sa.UUID, primary_key=True, server_default=sa.text("gen_random_uuid()")
     )
 
     date: orm.Mapped[datetime] = orm.mapped_column(
