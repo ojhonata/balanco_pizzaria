@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.data.db_session import get_session
-from app.schemas.type_schema import TypeCreate, TypeResponse
+from app.schemas.order_schema import TypeCreate, TypeResponse
 from app.service import type_service
 
 router = APIRouter()

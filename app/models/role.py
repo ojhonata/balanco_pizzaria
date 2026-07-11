@@ -1,3 +1,4 @@
+
 import sqlalchemy as sa
 from sqlalchemy import orm
 
@@ -13,4 +14,3 @@ class Role(ModelBase):
         autoincrement=True
     )
     name: orm.Mapped[str] = orm.mapped_column(sa.String(20), nullable=False)
-

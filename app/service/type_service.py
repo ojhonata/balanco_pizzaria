@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.type import Type
 from app.repository import type_repository
-from app.schemas.type_schema import TypeCreate
+from app.schemas.order_schema import TypeCreate
 
 
 def get_all(session: Session) -> list[Type]:

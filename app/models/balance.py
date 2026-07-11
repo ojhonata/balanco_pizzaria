@@ -14,6 +14,14 @@ from app.models.user import User
 class Balance(ModelBase):
     __tablename__: str = "balances"
 
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "week_start_date",
+            "sector_id",
+            name="uq_sector_week"
+        )
+    )
+
     id: orm.Mapped[uuid.UUID] = orm.mapped_column(
         sa.UUID,
         primary_key=True,
@@ -22,10 +30,12 @@ class Balance(ModelBase):
     week_start_date: orm.Mapped[date] = orm.mapped_column(
         sa.Date  # retorna somente ano-mes-dia
     )
-    sector: orm.Mapped[Sector] = orm.relationship(
-        "Sector",
-        back_populates="balances"
+    sector_id: orm.Mapped[int] = orm.mapped_column(
+        sa.Integer,
+        sa.ForeignKey("sectors.id"),
+        nullable=False
     )
+    sector: orm.Mapped[Sector] = orm.relationship("Sector", back_populates="balances")
 
     closed_by: orm.Mapped[uuid.UUID | None] = orm.mapped_column(
         sa.UUID,
