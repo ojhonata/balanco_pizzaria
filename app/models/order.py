@@ -5,6 +5,7 @@ from decimal import Decimal
 import sqlalchemy as sa
 from sqlalchemy import func, orm
 
+from app.models.enums import OrderStatus
 from app.models.material import Material
 from app.models.model_base import ModelBase
 from app.models.sector import Sector
@@ -23,7 +24,7 @@ class Order(ModelBase):
         sa.DECIMAL(11, 2),
         nullable=False
     )
-    quantity_received: orm.Mapped[Decimal] = orm.mapped_column(
+    quantity_received: orm.Mapped[Decimal | None] = orm.mapped_column(
         sa.DECIMAL(11, 2),
         nullable=True
     )
@@ -32,7 +33,7 @@ class Order(ModelBase):
         server_default=func.now(),
         nullable=False
     )
-    received_date: orm.Mapped[datetime] = orm.mapped_column(
+    received_date: orm.Mapped[datetime | None] = orm.mapped_column(
         sa.DATETIME(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
@@ -43,7 +44,7 @@ class Order(ModelBase):
         sa.ForeignKey("users.id"),
         nullable=False
     )
-    received_by: orm.Mapped[uuid.UUID] = orm.mapped_column(
+    received_by: orm.Mapped[uuid.UUID | None] = orm.mapped_column(
         sa.UUID,
         sa.ForeignKey("users.id"),
         nullable=True
@@ -64,9 +65,5 @@ class Order(ModelBase):
     )
     material: orm.Mapped[Material] = orm.relationship("Material", back_populates="orders")
 
-    active: orm.Mapped[bool] = orm.mapped_column(
-        sa.Boolean,
-        server_default=sa.true(),
-        default=True
-    )
+    status: orm.Mapped[OrderStatus] = orm.mapped_column()
 
