@@ -14,7 +14,7 @@ class Category(ModelBase):
             "name",
             "sector_id",
             name="uq_name_sector"
-        )
+        ),
     )
 
     id: orm.Mapped[int] = orm.mapped_column(

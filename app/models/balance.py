@@ -1,6 +1,6 @@
 #import datetime
+import datetime
 import uuid
-from datetime import date, datetime
 
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -19,7 +19,7 @@ class Balance(ModelBase):
             "week_start_date",
             "sector_id",
             name="uq_sector_week"
-        )
+        ),
     )
 
     id: orm.Mapped[uuid.UUID] = orm.mapped_column(
@@ -27,7 +27,7 @@ class Balance(ModelBase):
         primary_key=True,
         server_default=sa.text("gen_random_uuid()")
     )
-    week_start_date: orm.Mapped[date] = orm.mapped_column(
+    week_start_date: orm.Mapped[datetime.date] = orm.mapped_column(
         sa.Date  # retorna somente ano-mes-dia
     )
     sector_id: orm.Mapped[int] = orm.mapped_column(
@@ -44,4 +44,4 @@ class Balance(ModelBase):
     )
     user: orm.Mapped[User | None] = orm.relationship("User", back_populates="balances")
     status: orm.Mapped[BalanceStatus] = orm.mapped_column()
-    closed_at: orm.Mapped[datetime] = orm.mapped_column(sa.DateTime(timezone=True))
+    closed_at: orm.Mapped[datetime.datetime] = orm.mapped_column(sa.DateTime(timezone=True))

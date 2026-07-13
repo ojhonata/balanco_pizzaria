@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.role import Role
 from app.repository import location_repository
-from app.schemas.category_schema import LocationCreate
+from app.schemas.category_schema import CategoryCreate
 
 
 def get_all(session: Session) -> list[Role]:
@@ -18,7 +18,7 @@ def get_location_by_id(session: Session, id: int) -> list[Role]:
     return location
 
 
-def post_location(session: Session, data: LocationCreate) -> Role:
+def post_location(session: Session, data: CategoryCreate) -> Role:
     existing_location = location_repository.get_by_name(session, data.name)
 
     if existing_location:

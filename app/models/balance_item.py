@@ -1,5 +1,5 @@
+import datetime
 import uuid
-from datetime import datetime
 from decimal import Decimal
 
 import sqlalchemy as sa
@@ -19,7 +19,7 @@ class BalanceItem(ModelBase):
             "balance_id",
             "material_id",
             name="uq_balance_material"
-        )
+        ),
     )
 
     id: orm.Mapped[uuid.UUID] = orm.mapped_column(
@@ -52,7 +52,7 @@ class BalanceItem(ModelBase):
     balance_id: orm.Mapped[uuid.UUID] = orm.mapped_column(
         sa.UUID,
         sa.ForeignKey("balances.id"),
-        nullabel=False
+        nullable=False
     )
     balance: orm.Mapped[Balance] = orm.relationship(
         "Balance",
@@ -62,7 +62,7 @@ class BalanceItem(ModelBase):
     material_id: orm.Mapped[uuid.UUID] = orm.mapped_column(
         sa.UUID,
         sa.ForeignKey("materials.id"),
-        nullabel=False
+        nullable=False
     )
     material: orm.Mapped[Material] = orm.relationship("Material", back_populates="balance_items")
 
@@ -70,8 +70,8 @@ class BalanceItem(ModelBase):
         sa.Text,
         nullable=True
     )
-    revised_at: orm.Mapped[datetime | None] = orm.mapped_column(
-        sa.DATETIME(timezone=True),
+    revised_at: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
+        sa.DateTime(timezone=True),
         nullable=True
     )
     expected_quantity_fundo: orm.Mapped[Decimal | None] = orm.mapped_column(

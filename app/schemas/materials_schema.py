@@ -5,16 +5,13 @@ from pydantic import BaseModel
 
 class MaterialSchema(BaseModel):
     name: str
-    code: int
+    category_id: int
+    unit: str
     description: str
     minimum_stock: int
-    maximum_stock: int
-    quantity: int
-    location_id: int
 
-
-class MaterialCreate(MaterialSchema): ...
-
+class MaterialCreate(MaterialSchema):
+    pass
 
 class MaterialResponse(MaterialSchema):
     id: UUID
@@ -23,12 +20,9 @@ class MaterialResponse(MaterialSchema):
 
 class MaterialUpdate(BaseModel):
     name: str | None = None
-    code: int | None = None
+    category_id: int | None = None
+    unit: str | None = None
     description: str | None = None
     minimum_stock: int | None = None
-    maximum_stock: int | None = None
-    quantity: int | None = None
-    location_id: int | None = None
+    active: bool | None = None
 
-class MaterialDesactive(BaseModel):
-    active: bool

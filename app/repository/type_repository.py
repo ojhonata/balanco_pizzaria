@@ -1,8 +1,8 @@
+from app.models.type import Type
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.type import Type
-from app.schemas.order_schema import TypeCreate
+from app.schemas.order_schema import OrderCreate
 
 
 def get_all_type(session: Session) -> list[Type]:
@@ -13,7 +13,7 @@ def get_by_id(session: Session, id: int) -> Type | None:
     return session.execute(select(Type).where(Type.id == id)).scalar_one_or_none()  # pyright: ignore
 
 
-def create_type(session: Session, data: TypeCreate) -> Type:
+def create_type(session: Session, data: OrderCreate) -> Type:
     type = Type(name=data.name)
     session.add(type)
     session.commit()

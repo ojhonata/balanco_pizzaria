@@ -1,14 +1,19 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 
 
-class LocationCreate(BaseModel):
+class CategoryCreate(BaseModel):
     name: str
+    sector_id: UUID
 
 
-class LocationResponse(BaseModel):
+class CategoryResponse(BaseModel):
     id: int
     name: str
+    sector_id: UUID
 
 
-class LocationUpdate(BaseModel):
+class CategoryUpdate(BaseModel):
     name: str | None = None
+    sector_id: UUID | None = None

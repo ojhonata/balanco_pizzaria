@@ -1,5 +1,5 @@
+import datetime
 import uuid
-from datetime import datetime
 from decimal import Decimal
 
 import sqlalchemy as sa
@@ -28,13 +28,13 @@ class Order(ModelBase):
         sa.DECIMAL(11, 2),
         nullable=True
     )
-    order_date: orm.Mapped[datetime] = orm.mapped_column(
-        sa.DATETIME(timezone=True),
+    order_date: orm.Mapped[datetime.datetime] = orm.mapped_column(
+        sa.DateTime(timezone=True),
         server_default=func.now(),
         nullable=False
     )
-    received_date: orm.Mapped[datetime | None] = orm.mapped_column(
-        sa.DATETIME(timezone=True),
+    received_date: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
+        sa.DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
         nullable=True
@@ -65,5 +65,5 @@ class Order(ModelBase):
     )
     material: orm.Mapped[Material] = orm.relationship("Material", back_populates="orders")
 
-    status: orm.Mapped[OrderStatus] = orm.mapped_column()
+    status: orm.Mapped[OrderStatus] = orm.mapped_column(server_default="pendente")
 
