@@ -32,7 +32,7 @@ class Movement(ModelBase):
     sector: orm.Mapped[Sector] = orm.relationship("Sector", lazy="joined")
 
     material_id: orm.Mapped[uuid.UUID] = orm.mapped_column(
-        sa.Integer, ForeignKey("materials.id"), nullable=False
+        sa.UUID, ForeignKey("materials.id"), nullable=False
     )
     material: orm.Mapped[Material] = orm.relationship("Material", lazy="joined")
 

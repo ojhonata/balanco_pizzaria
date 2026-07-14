@@ -1,8 +1,8 @@
+from app.models.type import Type
 from sqlalchemy.orm import Session
 
-from app.models.type import Type
 from app.repository import type_repository
-from app.schemas.order_schema import TypeCreate
+from app.schemas.order_schema import OrderCreate
 
 
 def get_all(session: Session) -> list[Type]:
@@ -17,7 +17,7 @@ def get_type_by_id(session: Session, id: int) -> Type:
     return type
 
 
-def post_type(session: Session, data: TypeCreate) -> Type:
+def post_type(session: Session, data: OrderCreate) -> Type:
     existing_type = type_repository.get_by_name(session, data.name)
 
     if existing_type:

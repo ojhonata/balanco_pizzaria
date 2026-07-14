@@ -8,6 +8,7 @@ class Type(enum.Enum):
 class Location(enum.Enum):
     FUNDO = "fundo"
     FRENTE = "frente"
+    DISPENSA = "dispensa"
 
 class BalanceStatus(enum.Enum):
     ABERTO = "aberto"

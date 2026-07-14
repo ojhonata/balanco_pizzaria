@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.role import Role
-from app.schemas.category_schema import LocationCreate, LocationUpdate
+from app.schemas.category_schema import CategoryCreate, CategoryUpdate
 
 
 def get_all_location(session: Session) -> list[Role]:
@@ -15,7 +15,7 @@ def get_by_id(session: Session, id: int) -> Role | None:
     ).scalar_onr_or_one()  # pyright: ignore
 
 
-def create_location(session: Session, data: LocationCreate) -> Role:
+def create_location(session: Session, data: CategoryCreate) -> Role:
     location = Role(name=data.name, shlef=data.shelf_id)
 
     session.add(location)
@@ -25,7 +25,7 @@ def create_location(session: Session, data: LocationCreate) -> Role:
     return location
 
 
-def update_location(session: Session, id: int, data: LocationUpdate) -> Role | None:
+def update_location(session: Session, id: int, data: CategoryUpdate) -> Role | None:
     location = get_by_id(session, id)
 
     if not location:
