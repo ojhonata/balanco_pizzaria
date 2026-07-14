@@ -47,4 +47,4 @@ class BalanceItem(ModelBase):
         nullabel=False
     )
     material: orm.Mapped[Material] = orm.relationship("Material", back_populates="balance_items")
-    
+
