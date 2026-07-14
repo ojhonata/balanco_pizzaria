@@ -1,15 +1,11 @@
 from pydantic import BaseModel
 
 
-class ShlefResponse(BaseModel):
+class RoleResponse(BaseModel):
     id: int
     name: str
 
 
-class ShelfCreate(BaseModel):
+class RoleCreate(BaseModel):
     name: str
 
-
-class ShelfUpdate(BaseModel):
-    id: int
-    name: str | None

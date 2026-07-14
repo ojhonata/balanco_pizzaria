@@ -42,6 +42,9 @@ class Balance(ModelBase):
         sa.ForeignKey("users.id"),
         nullable=True
     )
-    user: orm.Mapped[User | None] = orm.relationship("User", back_populates="balances")
+    user: orm.Mapped[User] = orm.relationship("User", back_populates="balances")
     status: orm.Mapped[BalanceStatus] = orm.mapped_column()
-    closed_at: orm.Mapped[datetime.datetime] = orm.mapped_column(sa.DateTime(timezone=True))
+    closed_at: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
+        sa.DateTime(timezone=True),
+        nullable=True
+    )

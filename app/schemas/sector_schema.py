@@ -11,5 +11,4 @@ class SectorCreate(BaseModel):
 
 
 class SectorUpdate(BaseModel):
-    id: int
     name: str | None

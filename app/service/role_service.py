@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.category import Category
 from app.repository import shelf_repository
-from app.schemas.role_schema import ShelfCreate, ShelfUpdate
+from app.schemas.role_schema import RoleCreate, ShelfUpdate
 
 
 def get_all(session: Session) -> list[Category]:
@@ -18,7 +18,7 @@ def get_shelf_by_id(session: Session, id: int) -> Category:
     return shelf
 
 
-def post_shelf(session: Session, data: ShelfCreate) -> Category:
+def post_shelf(session: Session, data: RoleCreate) -> Category:
     existing_shelf = shelf_repository.get_by_name(session, data.name)
 
     if existing_shelf:

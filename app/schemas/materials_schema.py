@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class MaterialSchema(BaseModel):
@@ -13,9 +13,13 @@ class MaterialSchema(BaseModel):
 class MaterialCreate(MaterialSchema):
     pass
 
+    model_config = ConfigDict(from_attributes=True)
+
 class MaterialResponse(MaterialSchema):
     id: UUID
     active: bool
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class MaterialUpdate(BaseModel):
