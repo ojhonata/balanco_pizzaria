@@ -24,7 +24,7 @@ class Movement(ModelBase):
     )
 
     type: orm.Mapped[Type] = orm.mapped_column()
-    location: orm.Mapped[Location] = orm.mapped_column()
+    location: orm.Mapped[Location | None] = orm.mapped_column(nullable=True)
 
     sector_id: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, ForeignKey("sectors.id"), nullable=False

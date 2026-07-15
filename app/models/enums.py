@@ -18,3 +18,9 @@ class OrderStatus(enum.Enum):
     PENDENTE = "pendente"
     RECEBIDO = "recebido"
     NAO_ENTREGUE = "nao_entregue"
+
+class Roles(enum.Enum):
+    PIZZARIA = "pizzaria"
+    BAR = "bar"
+    COZINHA = "cozinha"
+    ADMIN = "admin"

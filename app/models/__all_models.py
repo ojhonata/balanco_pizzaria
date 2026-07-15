@@ -4,6 +4,5 @@ from app.models.category import Category #pyright: ignore
 from app.models.material import Material #pyright: ignore
 from app.models.movement import Movement #pyright: ignore
 from app.models.order import Order #pyright: ignore
-from app.models.role import Role #pyright: ignore
 from app.models.sector import Sector #pyright: ignore
 from app.models.user import User #pyright: ignore

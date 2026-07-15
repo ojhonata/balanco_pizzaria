@@ -18,7 +18,6 @@ class Material(ModelBase):
     description: orm.Mapped[str] = orm.mapped_column(sa.Text)
     minimum_stock: orm.Mapped[int | None] = orm.mapped_column(sa.Integer, nullable=True)
     # maximum_stock: orm.Mapped[int | None] = orm.mapped_column(sa.Integer, nullable=True)
-    quantity: orm.Mapped[int] = orm.mapped_column(sa.Integer, nullable=False)
 
     category_id: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, sa.ForeignKey("categories.id"), nullable=False
