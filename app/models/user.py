@@ -21,7 +21,7 @@ class User(ModelBase):
         nullable=False,
         unique=True
     ) # método de login
-    role_id: orm.Mapped[Roles] = orm.mapped_column(
+    role: orm.Mapped[Roles] = orm.mapped_column(
         nullable=False
     )
 

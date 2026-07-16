@@ -1,5 +1,6 @@
 import uuid
 from datetime import datetime
+from decimal import Decimal
 
 import sqlalchemy as sa
 from sqlalchemy import ForeignKey, orm
@@ -18,6 +19,11 @@ class Movement(ModelBase):
     id: orm.Mapped[uuid.UUID] = orm.mapped_column(
         sa.UUID, primary_key=True, server_default=sa.text("gen_random_uuid()")
     )
+    transfer_ref: orm.Mapped[uuid.UUID | None] = orm.mapped_column(
+        sa.UUID,
+        nullable=True,
+        index=True
+    )
 
     date: orm.Mapped[datetime] = orm.mapped_column(
         sa.DateTime, server_default=sa.func.now(), index=True
@@ -25,6 +31,7 @@ class Movement(ModelBase):
 
     type: orm.Mapped[Type] = orm.mapped_column()
     location: orm.Mapped[Location | None] = orm.mapped_column(nullable=True)
+    quantity: orm.Mapped[Decimal] = orm.mapped_column(sa.DECIMAL(11, 2), nullable=False)
 
     sector_id: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, ForeignKey("sectors.id"), nullable=False
@@ -41,9 +48,9 @@ class Movement(ModelBase):
     )
     user: orm.Mapped[User] = orm.relationship("User", lazy="joined")
 
-    order_id: orm.Mapped[uuid.UUID] = orm.mapped_column(
+    order_id: orm.Mapped[uuid.UUID | None] = orm.mapped_column(
         sa.UUID,
         sa.ForeignKey("orders.id"),
-        nullable=False
+        nullable=True
     )
     order: orm.Mapped[Order] = orm.relationship("Order", lazy="joined")
