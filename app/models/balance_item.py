@@ -64,7 +64,9 @@ class BalanceItem(ModelBase):
         sa.ForeignKey("materials.id"),
         nullable=False
     )
-    material: orm.Mapped[Material] = orm.relationship("Material", back_populates="balance_items")
+    material: orm.Mapped[Material] = orm.relationship(
+        "Material",
+        back_populates="balance_items")
 
     revision_note: orm.Mapped[str | None] = orm.mapped_column(
         sa.Text,
@@ -74,14 +76,14 @@ class BalanceItem(ModelBase):
         sa.DateTime(timezone=True),
         nullable=True
     )
-    expected_quantity_fundo: orm.Mapped[Decimal | None] = orm.mapped_column(
-        sa.DECIMAL(11, 2),
-        nullable=True
-    )
-    expected_quantity_frente: orm.Mapped[Decimal | None] = orm.mapped_column(
-        sa.DECIMAL(11, 2),
-        nullable=True
-    )
+    # expected_quantity_fundo: orm.Mapped[Decimal | None] = orm.mapped_column(
+    #     sa.DECIMAL(11, 2),
+    #     nullable=True
+    # )
+    # expected_quantity_frente: orm.Mapped[Decimal | None] = orm.mapped_column(
+    #     sa.DECIMAL(11, 2),
+    #     nullable=True
+    # )
     counted_quantity_fundo: orm.Mapped[Decimal | None] = orm.mapped_column(
         sa.DECIMAL(11, 2),
         nullable=True

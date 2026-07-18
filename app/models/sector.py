@@ -13,3 +13,8 @@ class Sector(ModelBase):
     name: orm.Mapped[str] = orm.mapped_column(
         sa.String(100), unique=True, nullable=False
     )
+    uses_location_split: orm.Mapped[bool] = orm.mapped_column(
+        sa.Boolean,
+        nullable=False,
+        server_default=sa.false()
+    )
