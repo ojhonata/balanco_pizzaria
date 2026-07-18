@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 
 import sqlalchemy as sa
 from sqlalchemy import orm
@@ -22,6 +23,11 @@ class Material(ModelBase):
     category_id: orm.Mapped[int] = orm.mapped_column(
         sa.Integer, sa.ForeignKey("categories.id"), nullable=False
     )
-
     category: orm.Mapped[Category] = orm.relationship("Category", lazy="joined")
+    tracks_container: orm.Mapped[bool] = orm.mapped_column(
+        sa.Boolean,
+        server_default=sa.false()
+    )
+    sale_price: orm.Mapped[Decimal | None] = orm.mapped_column(sa.DECIMAL(10, 2), nullable=True)
+
     active: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, server_default=sa.true())
