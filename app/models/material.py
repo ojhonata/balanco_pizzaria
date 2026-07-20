@@ -28,6 +28,9 @@ class Material(ModelBase):
         sa.Boolean,
         server_default=sa.false()
     )
-    sale_price: orm.Mapped[Decimal | None] = orm.mapped_column(sa.DECIMAL(10, 2), nullable=True)
+    sale_price: orm.Mapped[Decimal | None] = orm.mapped_column(
+        sa.DECIMAL(10, 2),
+        nullable=True
+    )
 
     active: orm.Mapped[bool] = orm.mapped_column(sa.Boolean, server_default=sa.true())
