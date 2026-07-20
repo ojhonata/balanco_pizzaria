@@ -11,7 +11,7 @@ class MovementSchema(BaseModel):
     material_id: UUID
     type: str
     user_id: UUID
-    order_id: UUID | None
+    order_id: UUID | None = None
     location: Location
 
 class MovementResponse(MovementSchema):

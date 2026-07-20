@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.category import Category
 from app.repository import shelf_repository
-from app.schemas.role_schema import RoleCreate, ShelfUpdate
+from app.schemas.container_count import RoleCreate, ShelfUpdate
 
 
 def get_all(session: Session) -> list[Category]:

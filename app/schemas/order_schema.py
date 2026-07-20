@@ -11,7 +11,7 @@ class OrderSchema(BaseModel):
     sector_id: int
     material_id: UUID
     quantity_requested: Decimal
-    requested_by: UUID
+    description: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -21,10 +21,11 @@ class OrderCreate(OrderSchema):
 class OrderResponse(OrderSchema):
     id: UUID
     status: OrderStatus
+    requested_by: UUID
     order_date: datetime.datetime
-    quantity_received: Decimal | None
+    quantity_received: Decimal | None = None
     received_date: datetime.datetime
-    received_by: UUID | None
+    received_by: UUID | None = None
 
 class OrderUpdate(BaseModel):
     sector_id: int | None = None

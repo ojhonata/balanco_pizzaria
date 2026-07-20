@@ -66,4 +66,5 @@ class Order(ModelBase):
     material: orm.Mapped[Material] = orm.relationship("Material", back_populates="orders")
 
     status: orm.Mapped[OrderStatus] = orm.mapped_column(server_default="pendente")
+    description: orm.Mapped[str | None] = orm.mapped_column(sa.Text, nullable=True)
 

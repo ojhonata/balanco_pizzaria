@@ -6,3 +6,4 @@ from app.models.movement import Movement #pyright: ignore
 from app.models.order import Order #pyright: ignore
 from app.models.sector import Sector #pyright: ignore
 from app.models.user import User #pyright: ignore
+from app.models.container_count import ContainerCount #pyright: ignore

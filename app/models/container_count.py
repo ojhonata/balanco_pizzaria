@@ -3,14 +3,14 @@ import uuid
 from decimal import Decimal
 
 import sqlalchemy as sa
-from pydantic import BaseModel
 from sqlalchemy import orm
 
 from app.models.material import Material
+from app.models.model_base import ModelBase
 from app.models.user import User
 
 
-class ContainerCount(BaseModel):
+class ContainerCount(ModelBase):
     __tablename__: str  = "container_counts"
 
     id: orm.Mapped[uuid.UUID] = orm.mapped_column(
@@ -25,7 +25,7 @@ class ContainerCount(BaseModel):
 
     material_id: orm.Mapped[uuid.UUID] = orm.mapped_column(
         sa.UUID,
-        sa.ForeignKey("material.id"),
+        sa.ForeignKey("materials.id"),
         nullable=False
     )
     material: orm.Mapped[Material] = orm.relationship(
@@ -36,6 +36,10 @@ class ContainerCount(BaseModel):
     counted_cascos: orm.Mapped[int] = orm.mapped_column(
         sa.Integer,
         nullable=False
+    )
+    description: orm.Mapped[str | None] = orm.mapped_column(
+        sa.Text,
+        nullable=True
     )
     expected_from_sales: orm.Mapped[int] = orm.mapped_column(
         sa.Integer,
@@ -53,7 +57,9 @@ class ContainerCount(BaseModel):
     )
     value_impact: orm.Mapped[Decimal] = orm.mapped_column(
         sa.DECIMAL(10, 2),
-        sa.Computed("difference * unit_sale_price", persisted=True),
+        sa.Computed(
+            "(counted_cascos - expected_from_sales) * unit_sale_price", persisted=True
+        ),
         nullable=False
     )
     counted_by: orm.Mapped[uuid.UUID] = orm.mapped_column(

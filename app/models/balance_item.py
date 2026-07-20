@@ -36,7 +36,10 @@ class BalanceItem(ModelBase):
         sa.DECIMAL(11, 2),
         nullable=False
     )
-    difference: orm.Mapped[Decimal] = orm.mapped_column(sa.DECIMAL(11, 2), nullable=False)
+    difference: orm.Mapped[Decimal] = orm.mapped_column(
+        sa.DECIMAL(11, 2),
+        sa.Computed("counted_quantity - expected_quantity", persisted=True),
+        nullable=False)
     revised_expected_quantity: orm.Mapped[Decimal | None] = orm.mapped_column(
         sa.DECIMAL(11, 2),
         nullable=True

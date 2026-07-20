@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.data.db_session import get_session
-from app.schemas.role_schema import RoleCreate, RoleResponse, ShelfUpdate
+from app.schemas.container_count import RoleCreate, RoleResponse, ShelfUpdate
 from app.service import role_service
 
 router = APIRouter()
