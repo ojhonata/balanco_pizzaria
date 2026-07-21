@@ -1,76 +1,88 @@
 from uuid import UUID
 
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
 
 from app.models.user import User
-from app.repository import user_repository
+from app.repository.user_repository import UserRepository
 from app.schemas.user_schema import UserCreate, UserUpdate
 
 
-def get_all(session: Session) -> list[User]:
-    try:
-        return user_repository.get_all_user(session)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+class UserService:
+    def __init__(self, repository: UserRepository):
+        self.repository = repository
+
+    async def list_user(self) -> list[User]:
+        try:
+            return await self.repository.get_all_user()
+        except Exception as e:
+            raise HTTPException(
+                status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Erro interno ao buscar por usuários: {e}"
+            ) from e
+
+    async def get_user_by_id(self, user_id: UUID) -> User:
+        user = await self.repository.get_by_id(user_id)
+
+        if not user:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND,
+                detail="Usuário não encontrado"
+            )
+        if not user.active:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                detail="Usuário inativo"
+            )
+
+        return user
 
 
-def get_user_by_cs(session: Session, cs: int) -> User:
-    if len(str(cs)) != 6:
-        raise ValueError("cs inválida")
+    async def create_user(self, data: UserCreate) -> User:
+        user_existing = await self.repository.get_by_name(data.name)
 
-    user = user_repository.get_by_cs(session, cs)
+        if user_existing:
+            raise HTTPException(status.HTTP_409_CONFLICT, detail="Nome já cadastrado")
 
-    if not user:
-        raise ValueError(f"Usuário com a cs {cs} não encontradao")
+        user_dict = data.model_dump()
 
-    if not user.active:
-        raise ValueError("Usuário desativado")
-
-    return user
+        return await self.repository.create_user(user_dict)
 
 
-def get_user_by_id(session: Session, id: UUID) -> User:
-    user = user_repository.get_by_id(session, id)
+    async def update_user(self, user_id: UUID, data: UserUpdate) -> User:
+        user = await self.repository.get_by_id(user_id)
 
-    if not user:
-        raise ValueError("Usuário não encontrado")
-    if not user.active:
-        raise ValueError("Usuário desativado")
+        if not user:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND,
+                detail="Usuário não encontrado"
+            )
+        if not user.active:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                detail="Usuário inativo"
+            )
 
-    return user
-
-
-def post_user(session: Session, data: UserCreate) -> User:
-    existing_user = user_repository.get_by_cs(session, data.cs)
-
-    if len(str(data.password)) != 8:
-        raise ValueError("A senha precisa ter 10 caracteres")
-
-    if len(str(data.cs)) != 6:
-        raise ValueError("cs inválida")
-
-    if existing_user:
-        raise ValueError("Usuário ja cadastrado")
-    return user_repository.create_user(session, data)
-
-
-def update_user(session: Session, cs: int, data: UserUpdate) -> User:
-    user = user_repository.get_by_cs(session, cs)
-    if len(str(data.cs)) != 6:
-        raise ValueError("cs precisa ter 6 caracteres")
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Usuário não encontrado"
-        )
-
-    update_data = data.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        if key == "sector":
-            user.sector_id = value
-        else:
+        update_data = data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
             setattr(user, key, value)
-    session.flush()
-    session.refresh(user)
-    return user
+
+        return await self.repository.update_user(user) # type: ignore
+
+    async def delete_user(self, user_id: UUID) -> User | None:
+        db_user = await self.repository.get_by_id(user_id)
+
+        if not db_user:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND,
+                detail="Usuário não encontrado"
+            )
+
+        if not db_user.active:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                detail="Usuário inativo"
+            )
+
+        db_user.active = True
+
+        return await self.repository.update_user(db_user)

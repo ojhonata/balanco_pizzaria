@@ -15,8 +15,8 @@ class UserRepository:
         result = await self.session.execute(select(User))
         return list(result.scalars().all())
 
-    async def get_by_code(self, code_user: int) -> User | None:
-        query = select(User).where(User.code == code_user)
+    async def get_by_name(self, name_user: str) -> User | None:
+        query = select(User).where(User.code == name_user)
         result = await self.session.execute(query)
 
         return result.scalars().unique().one_or_none()

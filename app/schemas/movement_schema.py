@@ -10,12 +10,12 @@ class MovementSchema(BaseModel):
     sector_id: int
     material_id: UUID
     type: str
-    user_id: UUID
     order_id: UUID | None = None
     location: Location
 
 class MovementResponse(MovementSchema):
     id: UUID
+    user_id: UUID
     date: datetime.datetime
 
     model_config = ConfigDict(from_attributes=True)
