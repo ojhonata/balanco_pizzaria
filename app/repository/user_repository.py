@@ -1,54 +1,43 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.user import User
-from app.schemas.user_schema import UserCreate, UserUpdate
 
 
-def get_all_user(session: Session) -> list[User]:
-    return session.execute(select(User)).scalars().all()  # pyright: ignore
+class UserRepository:
+    def __init__(self, session: AsyncSession):
+        self.session = session
 
+    async def get_all_user(self) -> list[User]:
+        result = await self.session.execute(select(User))
+        return list(result.scalars().all())
 
-def get_by_cs(session: Session, cs: int) -> User | None:
-    return session.execute(select(User).where(User.cs == cs)).scalars().first()
+    async def get_by_code(self, code_user: int) -> User | None:
+        query = select(User).where(User.code == code_user)
+        result = await self.session.execute(query)
 
-def get_by_id(session: Session, id: UUID) -> User:
-    return session.execute(select(User).where(User.id == id)).scalar_one_or_none()
+        return result.scalars().unique().one_or_none()
 
-def create_user(session: Session, data: UserCreate) -> User:
-    user = User(
-        name=data.name,
-        cs=data.cs,
-        sector_id=data.sector_id,
-        password=data.password,
-        role=data.role,
-    )
-    session.add(user)
-    session.commit()
-    session.refresh(user)
+    async def get_by_id(self, user_id: UUID) -> User | None:
+        query = select(User).where(User.id == user_id)
+        result = await self.session.execute(query)
 
-    return user
+        return result.scalars().unique().one_or_none()
 
+    async def create_user(self, data: dict[str, Any]) -> User:
+        user = User(**data)
 
-def update_user(session: Session, cs: int, data: UserUpdate) -> User | None:
-    user = get_by_cs(session, cs)
+        self.session.add(user)
+        await self.session.commit()
+        await self.session.refresh(user)
 
-    if not user:
-        return None
+        return user
 
-    if data.name is not None:
-        user.name = data.name
-    if data.cs is not None:
-        user.cs = data.cs
-    if data.active is not None:
-        user.active = data.active
-    if data.sector_id is not None:
-        user.sector_id = data.sector_id
-    if data.password is not None:
-        user.password = data.password
-
-    session.commit()
-    session.refresh(user)
-    return user
+    async def update_user(self, user: User) -> User | None:
+        self.session.add(user)
+        await self.session.commit()
+        await self.session.refresh(user)
+        return user

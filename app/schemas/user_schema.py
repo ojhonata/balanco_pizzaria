@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserSchema(BaseModel):
@@ -11,8 +11,7 @@ class UserSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class UserCreate(UserSchema):
-    code: int
-    pass
+    code: int = Field(max_length=4, examples=["1234"])
 
 class UserResponse(UserSchema):
     id: UUID
