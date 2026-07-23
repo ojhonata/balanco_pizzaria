@@ -16,10 +16,9 @@ class User(ModelBase):
     )
 
     name: orm.Mapped[str] = orm.mapped_column(sa.String(100), nullable=False, unique=True)
-    code: orm.Mapped[int] = orm.mapped_column(
-        sa.Integer,
+    code_hash: orm.Mapped[str] = orm.mapped_column(
+        sa.VARCHAR(255),
         nullable=False,
-        unique=True
     ) # método de login
     role: orm.Mapped[Roles] = orm.mapped_column(
         nullable=False

@@ -28,15 +28,22 @@ class Order(ModelBase):
         sa.DECIMAL(11, 2),
         nullable=True
     )
-    order_date: orm.Mapped[datetime.datetime] = orm.mapped_column(
+    requested_at: orm.Mapped[datetime.datetime] = orm.mapped_column(
         sa.DateTime(timezone=True),
         server_default=func.now(),
         nullable=False
     )
     received_date: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
         sa.DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
+        nullable=True
+    )
+    ordered_at: orm.Mapped[datetime.datetime | None] = orm.mapped_column(
+        sa.DateTime(timezone=True),
+        nullable=True
+    )
+    ordered_by: orm.Mapped[uuid.UUID | None] = orm.mapped_column(
+        sa.UUID,
+        sa.ForeignKey("users.id"),
         nullable=True
     )
     requested_by: orm.Mapped[uuid.UUID] = orm.mapped_column(
