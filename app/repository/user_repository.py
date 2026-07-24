@@ -11,7 +11,7 @@ class UserRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all_user(self) -> list[User]:
+    async def get_all(self) -> list[User]:
         result = await self.session.execute(select(User))
         return list(result.scalars().all())
 
@@ -33,7 +33,7 @@ class UserRepository:
 
         return result.scalars().unique().one_or_none()
 
-    async def create_user(self, data: dict[str, Any]) -> User:
+    async def create(self, data: dict[str, Any]) -> User:
         user = User(**data)
 
         self.session.add(user)
@@ -42,7 +42,7 @@ class UserRepository:
 
         return user
 
-    async def update_user(self, user: User) -> User | None:
+    async def update(self, user: User) -> User | None:
         self.session.add(user)
         await self.session.commit()
         await self.session.refresh(user)

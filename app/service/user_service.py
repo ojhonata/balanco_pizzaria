@@ -2,8 +2,8 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 
+from app.core.security import generate_code_hash
 from app.models.user import User
-from app.repository import user_repository
 from app.repository.user_repository import UserRepository
 from app.schemas.user_schema import UserCreate, UserUpdate
 
@@ -14,7 +14,7 @@ class UserService:
 
     async def list_users(self) -> list[User]:
         try:
-            return await self.repository.get_all_user()
+            return await self.repository.get_all()
         except Exception as e:
             raise HTTPException(
                 status_code=500,
@@ -61,27 +61,55 @@ class UserService:
         existing_user = await self.repository.get_by_name(data.name)
 
         if existing_user:
-            raise ValueError("Usuário ja cadastrado")
+            raise ValueError("Nome ja cadastrado")
 
-        return user_repository.create_user(session, data)
+        user_dict = data.model_dump()
+
+        user_dict["code_hash"] = generate_code_hash(data.code)
+        user_dict.pop("code")
+
+        return await self.repository.create(user_dict)
 
 
-    def update_user(session: Session, cs: int, data: UserUpdate) -> User:
-        user = user_repository.get_by_cs(session, cs)
-        if len(str(data.cs)) != 6:
-            raise ValueError("cs precisa ter 6 caracteres")
 
-        if not user:
+    async def update_user(self, user_id: UUID, data: UserUpdate) -> User | None:
+        db_user = await self.repository.get_by_id(user_id)
+
+        if not db_user:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Usuário não encontrado"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Usuário não encontrado"
             )
+
+        if data.name and data.name != db_user.name:
+            existing_user = await self.get_user_name(data.name)
+            if existing_user:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Nome do usuário já cadastrado"
+                )
 
         update_data = data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
-            if key == "sector":
-                user.sector_id = value
-            else:
-                setattr(user, key, value)
-        session.flush()
-        session.refresh(user)
-        return user
+            setattr(db_user, key, value)
+
+        return await self.repository.update(db_user)
+
+    async def delete_user(self, user_id: UUID) -> User | None:
+        db_user = await self.repository.get_by_id(user_id)
+
+        if not db_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Usuário não encontrado"
+            )
+
+        if not db_user.active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Usuário inativo"
+            )
+
+        db_user.active = False
+
+        return await self.repository.update(db_user)
