@@ -16,7 +16,13 @@ class UserRepository:
         return list(result.scalars().all())
 
     async def get_by_name(self, name_user: str) -> User | None:
-        query = select(User).where(User.code == name_user)
+        query = select(User).where(User.name == name_user)
+        result = await self.session.execute(query)
+
+        return result.scalars().unique().one_or_none()
+
+    async def get_by_code(self, code_user: str) -> User | None:
+        query = select(User).where(User.code_hash == code_user)
         result = await self.session.execute(query)
 
         return result.scalars().unique().one_or_none()
