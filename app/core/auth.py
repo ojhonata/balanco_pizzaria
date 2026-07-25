@@ -14,8 +14,8 @@ class AuthService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    async def authenticate(self, name: str, code:str) -> User | None:
-        user = await self.user_repository.get_by_name(name)
+    async def authenticate(self, code: str) -> User | None:
+        user = await self.user_repository.get_by_code(code)
 
         if not user:
             return None

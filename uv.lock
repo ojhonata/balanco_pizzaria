@@ -145,11 +145,16 @@ dependencies = [
     { name = "fastapi" },
     { name = "psycopg2-binary" },
 <<<<<<< HEAD
+<<<<<<< HEAD
     { name = "pwdlib", extra = ["argon2"] },
     { name = "pyjwt" },
 =======
     { name = "pyjwt", extra = ["crypto"] },
 >>>>>>> 6bff1308775f9f6e4f7b72d43c92bc4cda8c6d6d
+=======
+    { name = "pwdlib", extra = ["argon2"] },
+    { name = "pyjwt" },
+>>>>>>> 55b54be4e488db57806e4757066525643f21eab3
     { name = "sqlalchemy" },
     { name = "uvicorn" },
 ]
@@ -168,11 +173,16 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.135.1" },
     { name = "psycopg2-binary", specifier = ">=2.9.11" },
 <<<<<<< HEAD
+<<<<<<< HEAD
     { name = "pwdlib", extras = ["argon2"], specifier = ">=0.3.0" },
     { name = "pyjwt", specifier = ">=2.13.0" },
 =======
     { name = "pyjwt", extras = ["crypto"], specifier = ">=2.13.0" },
 >>>>>>> 6bff1308775f9f6e4f7b72d43c92bc4cda8c6d6d
+=======
+    { name = "pwdlib", extras = ["argon2"], specifier = ">=0.3.0" },
+    { name = "pyjwt", specifier = ">=2.13.0" },
+>>>>>>> 55b54be4e488db57806e4757066525643f21eab3
     { name = "pyright", marker = "extra == 'dev'" },
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "sqlalchemy", specifier = ">=2.0.48" },
@@ -547,6 +557,9 @@ wheels = [
 
 [[package]]
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 55b54be4e488db57806e4757066525643f21eab3
 name = "pwdlib"
 version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -561,8 +574,11 @@ argon2 = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 =======
 >>>>>>> 6bff1308775f9f6e4f7b72d43c92bc4cda8c6d6d
+=======
+>>>>>>> 55b54be4e488db57806e4757066525643f21eab3
 name = "pycparser"
 version = "3.0"
 source = { registry = "https://pypi.org/simple" }

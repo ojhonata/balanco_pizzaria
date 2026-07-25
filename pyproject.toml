@@ -12,12 +12,7 @@ dependencies = [
     "dotenv>=0.9.9",
     "fastapi>=0.135.1",
     "psycopg2-binary>=2.9.11",
-<<<<<<< HEAD
-    "pwdlib[argon2]>=0.3.0",
-    "pyjwt>=2.13.0",
-=======
     "pyjwt[crypto]>=2.13.0",
->>>>>>> 6bff1308775f9f6e4f7b72d43c92bc4cda8c6d6d
     "sqlalchemy>=2.0.48",
     "uvicorn>=0.42.0",
 ]
