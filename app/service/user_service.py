@@ -43,6 +43,9 @@ class UserService:
         if user_existing:
             raise HTTPException(status.HTTP_409_CONFLICT, detail="Nome já cadastrado")
 
+        if len(data.code) != 4:
+            raise
+
         user_dict = data.model_dump()
 
         return await self.repository.create_user(user_dict)

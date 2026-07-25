@@ -1,7 +1,7 @@
 import enum
 
 
-class Type(enum.Enum):
+class TypeMovement(enum.Enum):
     ENTRADA = "entrada"
     SAIDA = "saida"
 
@@ -15,6 +15,7 @@ class BalanceStatus(enum.Enum):
     FECHADO = "fechado"
 
 class OrderStatus(enum.Enum):
+    SOLICITADO = "solicitado"
     PENDENTE = "pendente"
     RECEBIDO = "recebido"
     NAO_ENTREGUE = "nao_entregue"

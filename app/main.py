@@ -9,8 +9,8 @@ if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, log_level="info", reload=True)
 
 
-app = FastAPI(title="FloorLy API",
-    description="Backend para mapeamento indoor e BI - Projeto MVP",
+app = FastAPI(title="SystemDarda API",
+    description="Sistema para contagem de materiais",
     version="1.0",
     #lifespan=lifespan
     )

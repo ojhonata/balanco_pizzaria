@@ -4,6 +4,7 @@ import jwt
 from fastapi.security import OAuth2PasswordBearer
 
 from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
+from app.core.security import check_code
 from app.models.user import User
 from app.repository.user_repository import UserRepository
 
@@ -13,7 +14,7 @@ class AuthService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
-    async def authenticate(self, name: str) -> User | None:
+    async def authenticate(self, name: str, code:str) -> User | None:
         user = await self.user_repository.get_by_name(name)
 
         if not user:
@@ -21,7 +22,9 @@ class AuthService:
 
         if not user.active:
             return None
-
+        
+        if not check_code(code, user.code_hash):
+            None
         return user
 
     def _create_token(self, type_token: str, tempo_vida: timedelta, sub: str) -> str:
