@@ -10,7 +10,7 @@ class SectorRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all_sector(self) -> list[Sector]:
+    async def get_all(self) -> list[Sector]:
         result = await self.session.execute(select(Sector))
         return list(result.scalars().all())
 
@@ -19,14 +19,14 @@ class SectorRepository:
         result = await self.session.execute(query)
 
         return result.scalars().unique().one_or_none()
-    
+
     async def get_by_name(self, name_sector: str) -> Sector | None:
         query = select(Sector).where(Sector.name == name_sector)
         result = await self.session.execute(query)
 
         return result.scalars().unique().one_or_none()
 
-    async def create_sector(self, data: dict[str, Any]) -> Sector:
+    async def create(self, data: dict[str, Any]) -> Sector:
         sector = Sector(**data)
 
         self.session.add(sector)
@@ -35,7 +35,7 @@ class SectorRepository:
 
         return sector
 
-    async def update_sector(self, sector: Sector) -> Sector | None:
+    async def update(self, sector: Sector) -> Sector | None:
         self.session.add(sector)
         await self.session.commit()
         await self.session.refresh(sector)

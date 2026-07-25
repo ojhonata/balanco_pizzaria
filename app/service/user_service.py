@@ -59,7 +59,10 @@ class UserService:
         existing_user = await self.repository.get_by_name(data.name)
 
         if existing_user:
-            raise ValueError("Nome ja cadastrado")
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Nome de usuário já cadastrado"
+            )
 
         user_dict = data.model_dump()
 
@@ -83,7 +86,7 @@ class UserService:
             existing_user = await self.get_user_name(data.name)
             if existing_user:
                 raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
+                    status_code=status.HTTP_409_CONFLICT,
                     detail="Nome do usuário já cadastrado"
                 )
 

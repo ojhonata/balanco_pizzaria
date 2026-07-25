@@ -22,18 +22,18 @@ class AuthService:
 
         if not user.active:
             return None
-        
+
         if not check_code(code, user.code_hash):
-            None
+            None # type: ignore
         return user
 
-    def _create_token(self, type_token: str, tempo_vida: timedelta, sub: str) -> str:
+    def _create_token(self, token_type: str, tempo_vida: timedelta, sub: str) -> str:
         payload = {}
 
         now = datetime.now(UTC)
         expira = now + tempo_vida
 
-        payload["type"] = type_token
+        payload["type"] = token_type
         payload["exp"] = expira
         payload["iat"] = now
         payload["sub"] = str(sub)
@@ -42,7 +42,7 @@ class AuthService:
 
     def create_token_access(self, sub: str) -> str:
         return self._create_token(
-            type_token = "access_token",
+            token_type = "access_token",
             tempo_vida = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
             sub = sub
         )
