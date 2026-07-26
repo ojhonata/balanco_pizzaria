@@ -24,7 +24,7 @@ class AuthService:
             return None
 
         if not check_code(code, user.code_hash):
-            None # type: ignore
+            return None
         return user
 
     def _create_token(self, token_type: str, tempo_vida: timedelta, sub: str) -> str:

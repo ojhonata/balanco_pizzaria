@@ -9,9 +9,9 @@ class SectorService:
     def __init__(self, repository: SectorRepository):
         self.repository = repository
 
-    def list_sector(self) -> list[Sector]:
+    async def list_sector(self) -> list[Sector]:
         try:
-            return self.repository.get_all() # type: ignore
+            return await self.repository.get_all()
         except ValueError as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

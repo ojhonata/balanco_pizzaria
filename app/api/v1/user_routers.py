@@ -1,40 +1,39 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from uuid import UUID
 
-from app.data.db_session import get_session
-from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
-from app.service import user_service
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.deps import ROleChecker
+from app.data.db_session import get_db
+from app.repository.user_repository import UserRepository
+from app.schemas.user_schema import UserCreate, UserResponse
+from app.service.user_service import UserService
 
 router = APIRouter()
 
+require_admin = ROleChecker(["admin"])
 
-@router.get("/", response_model=list[UserResponse])
-def list_users(session: Session = Depends(get_session)):
-    return user_service.get_all(session)
+@router.get("/", response_model=list[UserResponse], status_code=status.HTTP_200_OK)
+async def list_users(session: AsyncSession = Depends(require_admin)):
+    repository = UserRepository(session)
 
+    service = UserService(repository)
 
-@router.get("/user/{cs}", response_model=UserResponse)
-def list_by_cs(cs: int, session: Session = Depends(get_session)):
-    try:
-        return user_service.get_user_by_cs(session, cs)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return await service.list_users()
 
 
-@router.post("/", response_model=UserCreate)
-def create_user(data: UserCreate, session: Session = Depends(get_session)):
-    try:
-        return user_service.post_user(session, data)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+@router.get("/user/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
+async def get_user(user_id: UUID, session: AsyncSession = Depends(get_db)):
+    repository = UserRepository(session)
+    service = UserService(repository)
+
+    return await service.get_user_by_id(user_id)
 
 
-# está atualiuzando os outros campos mesma não enviando eles
-@router.patch("/{cs}", response_model=UserResponse)
-def update_user(
-    cs: int, data: UserUpdate, session: Session = Depends(get_session)
-):
-    try:
-        return user_service.update_user(session, cs, data)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+@router.post("/", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def post_user(data: UserCreate, session: AsyncSession = Depends(get_db)):
+    repository = UserRepository(session)
+    service = UserService(repository)
+
+    return await service.create_user(data)
+

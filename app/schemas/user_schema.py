@@ -2,11 +2,13 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.models.enums import Roles
+
 
 class UserSchema(BaseModel):
     name: str
     sector_id: int
-    role_id: int
+    role: Roles
 
     model_config = ConfigDict(from_attributes=True)
 
