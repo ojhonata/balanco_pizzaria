@@ -9,7 +9,7 @@ from app.schemas.user_schema import UserCreate, UserUpdate
 
 
 class UserService:
-    def __init__(self, repository: UserRepository):
+    def __init__(self, repository: UserRepository) -> None:
         self.repository = repository
 
     async def list_users(self) -> list[User]:
@@ -18,7 +18,7 @@ class UserService:
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Erro interno ao busacar todos os usuários: {e}")
+                detail=f"Erro interno ao busacar todos os usuários: {e}") from e
 
 
     async def get_user_by_name(self, name_user: str) -> User | None:
