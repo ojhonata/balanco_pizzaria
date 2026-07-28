@@ -21,7 +21,7 @@ class UserResponse(UserSchema):
 
 class UserUpdate(BaseModel):
     name: str | None = None
-    code: int | None = None
+    new_code: str | None = None
     sector_id: int | None = None
-    role_id: int | None = None
+    role: Roles | None = None
     active: bool | None = None

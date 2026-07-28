@@ -21,7 +21,7 @@ class UserService:
                 detail=f"Erro interno ao busacar todos os usuários: {e}")
 
 
-    async def get_user_name(self, name_user: str) -> User | None:
+    async def get_user_by_name(self, name_user: str) -> User | None:
         user = await self.repository.get_by_name(name_user)
 
         if not user:
@@ -82,15 +82,18 @@ class UserService:
                 detail="Usuário não encontrado"
             )
 
-        if data.name and data.name != db_user.name:
-            existing_user = await self.get_user_name(data.name)
-            if existing_user:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Nome do usuário já cadastrado"
-                )
+        existing_user = await self.repository.get_by_name(data.name) # type: ignore
+        if existing_user and existing_user.id != user_id: # type: ignore
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Nome do usuário já cadastrado"
+            )
 
         update_data = data.model_dump(exclude_unset=True)
+
+        if update_data.get("new_code"):
+            update_data["code_hash"] = generate_code_hash(update_data.pop("new_code")) # type: ignore
+
         for key, value in update_data.items():
             setattr(db_user, key, value)
 
