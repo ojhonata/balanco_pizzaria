@@ -16,7 +16,7 @@ class BalanceStatus(enum.Enum):
 
 class OrderStatus(enum.Enum):
     SOLICITADO = "solicitado"
-    PENDENTE = "pendente"
+    PEDIDO_REALIZADO = "pedido_realizado"
     RECEBIDO = "recebido"
     NAO_ENTREGUE = "nao_entregue"
 

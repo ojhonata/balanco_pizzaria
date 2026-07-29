@@ -1,19 +1,18 @@
-from uuid import UUID
 
 from pydantic import BaseModel
 
 
 class CategoryCreate(BaseModel):
     name: str
-    sector_id: UUID
+    sector_id: int
 
 
 class CategoryResponse(BaseModel):
     id: int
     name: str
-    sector_id: UUID
+    sector_id: int
 
 
 class CategoryUpdate(BaseModel):
     name: str | None = None
-    sector_id: UUID | None = None
+    sector_id: int | None = None

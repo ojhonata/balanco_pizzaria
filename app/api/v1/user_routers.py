@@ -5,25 +5,25 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import AuthService
-from app.core.deps import ROleChecker
+from app.core.deps import RoleChecker, get_currente_user
 from app.data.db_session import get_db
 from app.models.user import User
 from app.repository.user_repository import UserRepository
 from app.schemas.token_schema import TokenResponse
-from app.schemas.user_schema import UserCreate, UserResponse
+from app.schemas.user_schema import UserCreate, UserResponse, UserUpdate
 from app.service.get_auth_service import get_auth_service
 from app.service.user_service import UserService
 
 router = APIRouter()
 
-require_pizzaria = ROleChecker(["PIZZARIA"])
+require_admin = RoleChecker(["ADMIN"])
 
 @router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
-async def get_loggedin(user_loggedin: User = Depends(require_pizzaria)) -> User:
+async def get_loggedin(user_loggedin: User = Depends(get_currente_user)) -> User:
     return user_loggedin
 
 @router.get("/", response_model=list[UserResponse], status_code=status.HTTP_200_OK)
-async def list_users(current_user: User = Depends(require_pizzaria), session: AsyncSession = Depends(get_db)):
+async def list_users(current_user=Depends(get_currente_user), session: AsyncSession = Depends(get_db)): # type: ignore
     repository = UserRepository(session)
 
     service = UserService(repository)
@@ -32,7 +32,11 @@ async def list_users(current_user: User = Depends(require_pizzaria), session: As
 
 
 @router.get("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
-async def get_user(user_id: UUID, session: AsyncSession = Depends(get_db)):
+async def get_user(
+        user_id: UUID,
+        session: AsyncSession = Depends(get_db),
+        curretn_user = Depends(get_currente_user) # type: ignore
+    ):
     repository = UserRepository(session)
     service = UserService(repository)
 
@@ -40,7 +44,11 @@ async def get_user(user_id: UUID, session: AsyncSession = Depends(get_db)):
 
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def post_user(data: UserCreate, session: AsyncSession = Depends(get_db)):
+async def post_user(
+        data: UserCreate,
+        session: AsyncSession = Depends(get_db),
+        current_user = Depends(require_admin) # type: ignore
+    ):
     repository = UserRepository(session)
     service = UserService(repository)
 
@@ -70,3 +78,27 @@ async def loin(
         "access_token": auth_service.create_token_access(sub=user.id), # type: ignore
         "token_type": "bearer"
     }
+
+@router.patch("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserResponse)
+async def patch_user(
+        user_id: UUID,
+        data: UserUpdate,
+        current_user = Depends(get_currente_user), # type: ignore
+        session: AsyncSession = Depends(get_db)
+    ):
+    repository = UserRepository(session)
+
+    service = UserService(repository)
+
+    return await service.update_user(user_id, data)
+
+@router.delete("/{user_id}", status_code=status.HTTP_200_OK, response_model=UserResponse)
+async def delete_user(
+        user_id: UUID,
+        current_user = Depends(require_admin), # type: ignore
+        session: AsyncSession = Depends(get_db)
+    ):
+    repository = UserRepository(session)
+    service = UserService(repository)
+
+    return await service.delete_user(user_id)
