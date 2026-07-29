@@ -1,41 +1,35 @@
+
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.data.db_session import get_session
-from app.schemas.materials_schema import MaterialCreate, MaterialResponse, MaterialUpdate
-from app.service import material_service
+from app.core.deps import RoleChecker, get_currente_user
+from app.data.db_session import get_db
+from app.repository.material_repository import MaterialRepository
+from app.schemas.materials_schema import MaterialResponse
+from app.service.material_service import MaterialService
 
 router = APIRouter()
 
+require_admin = RoleChecker(["ADMIN"])
 
-@router.get("/materials", response_model=list[MaterialResponse])
-def list_materials(session: Session = Depends(get_session)):
-    return material_service.get_all(session)
+@router.get("/", response_model=list[MaterialResponse], status_code=status.HTTP_200_OK)
+async def list_materials(
+    session: AsyncSession = Depends(get_db),
+    current_user = Depends(get_currente_user)): # type: ignore
+    repository = MaterialRepository(session)
+    service = MaterialService(repository)
 
+    return await service.list_materials()
 
-@router.get("/material/{id}", response_model=MaterialResponse)
-def list_material_by_id(id: UUID, session: Session = Depends(get_session)):
-    try:
-        return material_service.get_material_by_id(session, id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+@router.get("/", response_model=MaterialResponse, status_code=status.HTTP_200_OK)
+async def get_material(
+        material_id: UUID,
+        session: AsyncSession = Depends(get_db),
+        currentUser = Depends(require_admin) #pyright: ignore
+    ):
+    repository = MaterialRepository(session)
+    service = MaterialService(repository)
 
-
-@router.post("/create_material", response_model=MaterialCreate)
-def post_material(data: MaterialCreate, session: Session = Depends(get_session)):
-    try:
-        return material_service.post_material(session, data)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.patch("/update_material/{id}", response_model=MaterialUpdate)
-def update_material(
-    data: MaterialUpdate, id: UUID, session: Session = Depends(get_session)
-):
-    try:
-        return material_service.update_material(session, data, id)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    return await service.get_material_by_id(material_id)

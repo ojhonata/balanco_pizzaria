@@ -1,6 +1,8 @@
+from decimal import Decimal
+from typing import Self
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 
 class MaterialSchema(BaseModel):
@@ -8,7 +10,15 @@ class MaterialSchema(BaseModel):
     category_id: int
     unit: str
     description: str
-    minimum_stock: int
+    minimum_stock: int | None = None
+    tracks_container: bool = False
+    sale_price: Decimal | None = None
+
+    @model_validator(mode="after")
+    def varify_tracks_and_price(self) -> Self:
+        if self.tracks_container and self.sale_price is None:
+            raise ValueError("sale_price é obrigatório quando tracks_container=True")
+        return self
 
 class MaterialCreate(MaterialSchema):
     pass
@@ -29,4 +39,12 @@ class MaterialUpdate(BaseModel):
     description: str | None = None
     minimum_stock: int | None = None
     active: bool | None = None
+    tracks_container: bool = False
+    sale_price: Decimal | None = None
+
+    @model_validator(mode="after")
+    def varify_tracks_and_price(self) -> Self:
+        if self.tracks_container and self.sale_price is None:
+            raise ValueError("sale_price é obrigatório quando tracks_container=True")
+        return self
 

@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
@@ -26,4 +27,24 @@ class MaterialRepository:
 
         return result.scalars().unique().one_or_none()
 
+    async def get_by_name_and_category(self, name: str, category_id: int) -> Material | None:
+        query = select(Material).where(
+            Material.name == name and Material.category_id == category_id)
+        result = await self.session.execute(query)
+        return result.scalars().unique().one_or_none()
 
+    async def create(self, data: dict[str, Any]) -> Material:
+        material = Material(**data)
+
+        self.session.add(material)
+        await self.session.commit()
+        await self.session.refresh(material)
+
+        return material
+
+    async def update(self, material: Material) -> Material:
+        self.session.add(material)
+        await self.session.commit()
+        await self.session.refresh(material)
+
+        return material

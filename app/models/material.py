@@ -11,6 +11,14 @@ from app.models.model_base import ModelBase
 class Material(ModelBase):
     __tablename__: str = "materials"
 
+    __table_args__ = (
+        sa.UniqueConstraint(
+            "name",
+            "category_id",
+            name="uq_name_category"
+        ),
+    )
+
     id: orm.Mapped[uuid.UUID] = orm.mapped_column(
         sa.UUID, primary_key=True, server_default=sa.text("gen_random_uuid()")
     )

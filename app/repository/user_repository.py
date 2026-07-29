@@ -8,7 +8,7 @@ from app.models.user import User
 
 
 class UserRepository:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get_all(self) -> list[User]:

@@ -59,7 +59,7 @@ class CategoryService:
         if not category:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Categori não encontrada"
+                detail="Categoria não encontrada"
             )
 
         update_data = data.model_dump(exclude_unset=True)

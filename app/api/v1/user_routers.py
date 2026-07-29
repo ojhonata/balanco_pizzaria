@@ -55,7 +55,7 @@ async def post_user(
     return await service.create_user(data)
 
 @router.post("/login", status_code=status.HTTP_201_CREATED, response_model=TokenResponse)
-async def loin(
+async def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         auth_service: AuthService = Depends(get_auth_service)
     ):
