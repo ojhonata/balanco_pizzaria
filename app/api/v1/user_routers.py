@@ -23,7 +23,7 @@ async def get_loggedin(user_loggedin: User = Depends(require_pizzaria)) -> User:
     return user_loggedin
 
 @router.get("/", response_model=list[UserResponse], status_code=status.HTTP_200_OK)
-async def list_users(session: AsyncSession = Depends(require_pizzaria)):
+async def list_users(current_user: User = Depends(require_pizzaria), session: AsyncSession = Depends(get_db)):
     repository = UserRepository(session)
 
     service = UserService(repository)
