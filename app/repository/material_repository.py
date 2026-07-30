@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.material import Material
@@ -11,9 +11,16 @@ class MaterialRepository:
     def __init__(self, session: AsyncSession)-> None:
         self.session = session
 
-    async def get_all(self) -> list[Material]:
-        result = await self.session.execute(select(Material))
-        return list(result.scalars().all())
+    async def get_all(self, limit: int, offset: int) -> tuple[list[Material], int]:
+        count_query = select(func.count()).select_from(Material)
+        total_result = await self.session.execute(count_query)
+        total = total_result.scalar_one()
+
+        items_query = select(Material).limit(limit).offset(offset)
+        items_result = await self.session.execute(items_query)
+        items = list(items_result.scalars())
+
+        return items, total
 
     async def get_by_id(self, material_id: UUID) -> Material | None:
         query = select(Material).where(Material.id == material_id)

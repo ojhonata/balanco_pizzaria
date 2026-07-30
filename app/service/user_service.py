@@ -117,3 +117,4 @@ class UserService:
         db_user.active = False
 
         return await self.repository.update(db_user)
+
