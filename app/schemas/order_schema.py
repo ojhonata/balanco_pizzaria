@@ -22,23 +22,22 @@ class OrderResponse(OrderSchema):
     id: UUID
     status: OrderStatus
     requested_by: UUID
-    order_date: datetime.datetime
+    requested_at: datetime.datetime
     quantity_received: Decimal | None = None
-    received_date: datetime.datetime
+    quantity_ordered: Decimal | None = None
+    received_date: datetime.datetime | None = None
     received_by: UUID | None = None
+    ordered_by: UUID | None = None
+    ordered_at: datetime.datetime | None = None
 
 class OrderUpdate(BaseModel):
-    sector_id: int | None = None
     material_id: UUID | None = None
     quantity_requested: Decimal | None = None
-    quantity_received: Decimal | None
-    requested_by: UUID | None = None
-    received_by: UUID | None = None
-    status: str | None = None
-    order_date: datetime.datetime | None = None
-    received_date: datetime.datetime | None = None
 
 class OrderReceived(BaseModel):
     quantity_received: Decimal
-    received_by: UUID
+    # received_by: UUID
+
+class OrderMarkOrdered(BaseModel):
+    quantity_ordered: Decimal
 

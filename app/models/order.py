@@ -28,6 +28,10 @@ class Order(ModelBase):
         sa.DECIMAL(11, 2),
         nullable=True
     )
+    quantity_ordered: orm.Mapped[Decimal | None] = orm.mapped_column(
+        sa.DECIMAL(11, 2),
+        nullable=True
+    )
     requested_at: orm.Mapped[datetime.datetime] = orm.mapped_column(
         sa.DateTime(timezone=True),
         server_default=func.now(),

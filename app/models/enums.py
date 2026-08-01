@@ -1,7 +1,7 @@
 import enum
 
 
-class TypeMovement(enum.Enum):
+class Type(enum.Enum):
     ENTRADA = "entrada"
     SAIDA = "saida"
 
@@ -24,4 +24,5 @@ class Roles(enum.Enum):
     PIZZARIA = "pizzaria"
     BAR = "bar"
     COZINHA = "cozinha"
+    ESCRITORIO = "escritorio"
     ADMIN = "admin"

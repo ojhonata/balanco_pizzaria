@@ -5,7 +5,7 @@ from decimal import Decimal
 import sqlalchemy as sa
 from sqlalchemy import ForeignKey, orm
 
-from app.models.enums import Location, TypeMovement
+from app.models.enums import Location, Type
 from app.models.material import Material
 from app.models.model_base import ModelBase
 from app.models.order import Order
@@ -29,7 +29,7 @@ class Movement(ModelBase):
         sa.DateTime, server_default=sa.func.now(), index=True
     )
 
-    type: orm.Mapped[TypeMovement] = orm.mapped_column()
+    type: orm.Mapped[Type] = orm.mapped_column()
     location: orm.Mapped[Location | None] = orm.mapped_column(nullable=True)
     quantity: orm.Mapped[Decimal] = orm.mapped_column(sa.DECIMAL(11, 2), nullable=False)
 
