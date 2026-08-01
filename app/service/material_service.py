@@ -4,16 +4,23 @@ from fastapi import HTTPException, status
 
 from app.models.material import Material
 from app.repository.material_repository import MaterialRepository
-from app.schemas.materials_schema import MaterialCreate, MaterialUpdate
+from app.schemas.materials_schema import (
+    MaterialCreate,
+    MaterialUpdate,
+)
 
 
 class MaterialService:
     def __init__(self, repository: MaterialRepository) -> None:
         self.repository = repository
 
-    async def list_materials(self) -> list[Material]:
+    async def list_materials(
+        self,
+        limit: int,
+        offset: int,
+        name: str | None = None) -> tuple[list[Material], int]:
         try:
-            return await self.repository.get_all()
+            return await self.repository.get_all(limit, offset, name)
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -124,24 +131,5 @@ class MaterialService:
             )
 
         material.active = False
-
-        return await self.repository.update(material)
-
-    async def active_material(self, material_id: UUID) -> Material | None:
-        material = await self.repository.get_by_id(material_id)
-
-        if not material:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Material não encontrado"
-            )
-
-        if material.active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Material já está ativo"
-            )
-
-        material.active = True
 
         return await self.repository.update(material)

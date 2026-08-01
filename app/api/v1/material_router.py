@@ -1,7 +1,8 @@
 
+from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import RoleChecker, get_currente_user
@@ -12,20 +13,27 @@ from app.schemas.materials_schema import (
     MaterialResponse,
     MaterialUpdate,
 )
+from app.schemas.pagenation_schema import MaterialPageResponse
 from app.service.material_service import MaterialService
 
 router = APIRouter()
 
 require_admin = RoleChecker(["ADMIN"])
 
-@router.get("/", response_model=list[MaterialResponse], status_code=status.HTTP_200_OK)
+@router.get("/", response_model=MaterialPageResponse, status_code=status.HTTP_200_OK)
 async def list_materials(
     session: AsyncSession = Depends(get_db),
-    current_user = Depends(get_currente_user)): # type: ignore
+    current_user = Depends(get_currente_user), # type: ignore
+    offset: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 10,
+    name: str | None = None
+    ) -> MaterialPageResponse:
     repository = MaterialRepository(session)
     service = MaterialService(repository)
 
-    return await service.list_materials()
+    materials, total = await service.list_materials(limit, offset, name)
+
+    return MaterialPageResponse(items=materials, total=total, limit=limit, offset=offset) # type: ignore
 
 @router.get("/{material_id}", response_model=MaterialResponse, status_code=status.HTTP_200_OK)
 async def get_material(
@@ -38,16 +46,16 @@ async def get_material(
 
     return await service.get_material_by_id(material_id)
 
-@router.get("/{material_name}", response_model=MaterialResponse, status_code=status.HTTP_200_OK)
-async def get_materia_by_name(
-        material_name: str,
-        session: AsyncSession = Depends(get_db),
-        current_user = Depends(get_currente_user) # pyright: ignore
-    ):
-    repository = MaterialRepository(session)
-    service = MaterialService(repository)
+# @router.get("/{material_name}", response_model=MaterialResponse, status_code=status.HTTP_200_OK)
+# async def get_materia_by_name(
+#         material_name: str,
+#         session: AsyncSession = Depends(get_db),
+#         current_user = Depends(get_currente_user) # pyright: ignore
+#     ):
+#     repository = MaterialRepository(session)
+#     service = MaterialService(repository)
 
-    return await service.get_material_by_name(material_name)
+#     return await service.get_material_by_name(material_name)
 
 @router.post("/", response_model=MaterialResponse, status_code=status.HTTP_201_CREATED)
 async def post_material(

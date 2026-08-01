@@ -11,12 +11,21 @@ class MaterialRepository:
     def __init__(self, session: AsyncSession)-> None:
         self.session = session
 
-    async def get_all(self, limit: int, offset: int) -> tuple[list[Material], int]:
-        count_query = select(func.count()).select_from(Material)
+    async def get_all(
+        self,
+        limit: int,
+        offset: int,
+        name: str | None,) -> tuple[list[Material], int]:
+
+        filters: list[Any] = []
+        if name:
+            filters.append(Material.name.ilike(f"%{name}%")) # type: ignore
+
+        count_query = select(func.count()).select_from(Material).where(*filters)
         total_result = await self.session.execute(count_query)
         total = total_result.scalar_one()
 
-        items_query = select(Material).limit(limit).offset(offset)
+        items_query = select(Material).where(*filters).limit(limit).offset(offset)
         items_result = await self.session.execute(items_query)
         items = list(items_result.scalars())
 
