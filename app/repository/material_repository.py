@@ -1,7 +1,7 @@
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import and_, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.material import Material
@@ -45,7 +45,7 @@ class MaterialRepository:
 
     async def get_by_name_and_category(self, name: str, category_id: int) -> Material | None:
         query = select(Material).where(
-            Material.name == name and Material.category_id == category_id)
+            and_(Material.name == name and Material.category_id == category_id))
         result = await self.session.execute(query)
         return result.scalars().unique().one_or_none()
 
