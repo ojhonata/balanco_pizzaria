@@ -50,32 +50,36 @@ class Order(ModelBase):
         sa.ForeignKey("users.id"),
         nullable=True
     )
+    ordered: orm.Mapped[User | None] = orm.relationship("User", foreign_keys=[ordered_by])
+
     requested_by: orm.Mapped[uuid.UUID] = orm.mapped_column(
         sa.UUID,
         sa.ForeignKey("users.id"),
         nullable=False
     )
+    requested: orm.Mapped[User] = orm.relationship("User", foreign_keys=[requested_by])
+
     received_by: orm.Mapped[uuid.UUID | None] = orm.mapped_column(
         sa.UUID,
         sa.ForeignKey("users.id"),
         nullable=True
     )
-    user: orm.Mapped[User] = orm.relationship("User", back_populates="orders")
+    received: orm.Mapped[User | None] = orm.relationship("User", foreign_keys=[received_by])
 
     sector_id: orm.Mapped[int] = orm.mapped_column(
         sa.Integer,
         sa.ForeignKey("sectors.id"),
         nullable=False
     )
-    sector: orm.Mapped[Sector] = orm.relationship("Sector", back_populates="orders")
+    sector: orm.Mapped[Sector] = orm.relationship("Sector", lazy="joined")
 
     material_id: orm.Mapped[uuid.UUID] = orm.mapped_column(
         sa.UUID,
         sa.ForeignKey("materials.id"),
         nullable=False
     )
-    material: orm.Mapped[Material] = orm.relationship("Material", back_populates="orders")
+    material: orm.Mapped[Material] = orm.relationship("Material", lazy="joined")
 
-    status: orm.Mapped[OrderStatus] = orm.mapped_column(server_default="pendente")
+    status: orm.Mapped[OrderStatus] = orm.mapped_column(server_default="solicitado")
     description: orm.Mapped[str | None] = orm.mapped_column(sa.Text, nullable=True)
 

@@ -23,7 +23,7 @@ async def get_loggedin(user_loggedin: User = Depends(get_currente_user)) -> User
     return user_loggedin
 
 @router.get("/", response_model=list[UserResponse], status_code=status.HTTP_200_OK)
-async def list_users(current_user=Depends(get_currente_user), session: AsyncSession = Depends(get_db)): # type: ignore
+async def get_users(current_user=Depends(get_currente_user), session: AsyncSession = Depends(get_db)): # type: ignore
     repository = UserRepository(session)
 
     service = UserService(repository)

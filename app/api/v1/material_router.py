@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.deps import RoleChecker, get_currente_user
 from app.data.db_session import get_db
+from app.models.user import User
 from app.repository.material_repository import MaterialRepository
 from app.schemas.materials_schema import (
     MaterialCreate,
@@ -20,14 +21,14 @@ router = APIRouter()
 
 require_admin = RoleChecker(["ADMIN"])
 
-@router.get("/", response_model=MaterialPageResponse, status_code=status.HTTP_200_OK)
-async def list_materials(
+@router.get("/", response_model=list[MaterialPageResponse], status_code=status.HTTP_200_OK)
+async def get_materials(
     session: AsyncSession = Depends(get_db),
-    current_user = Depends(get_currente_user), # type: ignore
+    current_user: User = Depends(get_currente_user), # type: ignore
     offset: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = 10,
     name: str | None = None
-    ) -> MaterialPageResponse:
+    ) -> list[MaterialPageResponse]:
     repository = MaterialRepository(session)
     service = MaterialService(repository)
 
@@ -39,7 +40,7 @@ async def list_materials(
 async def get_material(
         material_id: UUID,
         session: AsyncSession = Depends(get_db),
-        currentUser = Depends(require_admin) #pyright: ignore
+        current_user: User = Depends(require_admin) #pyright: ignore
     ):
     repository = MaterialRepository(session)
     service = MaterialService(repository)
@@ -61,7 +62,7 @@ async def get_material(
 async def post_material(
         data: MaterialCreate,
         session: AsyncSession = Depends(get_db),
-        current_user = Depends(require_admin) # pyright:ignore
+        current_user: User = Depends(require_admin) # pyright:ignore
     ):
     repository = MaterialRepository(session)
     service = MaterialService(repository)
@@ -73,7 +74,7 @@ async def patch_material(
         material_id: UUID,
         data: MaterialUpdate,
         session: AsyncSession = Depends(get_db),
-        current_user = Depends(require_admin) # pyright: ignore
+        current_user: User = Depends(require_admin) # pyright: ignore
     ):
     repository = MaterialRepository(session)
     service = MaterialService(repository)
@@ -84,7 +85,7 @@ async def patch_material(
 async def delete_material(
         material_id: UUID,
         session: AsyncSession = Depends(get_db),
-        current_user = Depends(require_admin) # pyright: ignore
+        current_user: User = Depends(require_admin) # pyright: ignore
     ):
     repository = MaterialRepository(session)
     service = MaterialService(repository)

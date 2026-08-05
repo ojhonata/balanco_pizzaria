@@ -12,7 +12,7 @@ router = APIRouter()
 require_admin = RoleChecker(["ADMIN"])
 
 @router.get("/", response_model=list[SectorResponse], status_code=status.HTTP_200_OK)
-async def list_sectors(
+async def get_sectors(
         session: AsyncSession = Depends(get_db),
         current_user = Depends(get_currente_user) # type: ignore
     ):

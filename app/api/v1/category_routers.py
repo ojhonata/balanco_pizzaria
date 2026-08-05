@@ -12,7 +12,7 @@ router = APIRouter()
 requisre_admin = RoleChecker(["ADMIN"])
 
 @router.get("/", response_model=list[CategoryResponse], status_code=status.HTTP_200_OK)
-async def list_categories(
+async def get_categories(
         current_user = Depends(get_currente_user), # type: ignore
         session: AsyncSession = Depends(get_db)
     ):
