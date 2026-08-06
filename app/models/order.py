@@ -80,6 +80,10 @@ class Order(ModelBase):
     )
     material: orm.Mapped[Material] = orm.relationship("Material", lazy="joined")
 
-    status: orm.Mapped[OrderStatus] = orm.mapped_column(server_default="solicitado")
+    status: orm.Mapped[OrderStatus] = orm.mapped_column(
+        sa.Enum(OrderStatus, name="orderstatus"),
+        server_default=sa.text(f"'{OrderStatus.SOLICITADO.name}'"),
+        nullable=False
+    )
     description: orm.Mapped[str | None] = orm.mapped_column(sa.Text, nullable=True)
 

@@ -32,10 +32,7 @@ class OrderService:
                 detail=f"Erro ao buscar por todos os pedidos {e}"
             )from e
 
-    async def get_order(
-        self,
-        order_id: UUID,
-    ) -> Order | None:
+    async def get_order_by_id(self, order_id: UUID, ) -> Order | None:
         order = await self.repository.get_by_id(order_id)
 
         if not order:
@@ -46,7 +43,7 @@ class OrderService:
 
         return order
 
-    async def create_order(self, data: OrderCreate) -> Order:
+    async def create_order(self, data: OrderCreate, requested_by: UUID) -> Order:
         if data.quantity_requested <= 0:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
@@ -54,5 +51,6 @@ class OrderService:
             )
 
         order_data = data.model_dump()
+        order_data["requested_by"] = requested_by
 
         return await self.repository.create(order_data)

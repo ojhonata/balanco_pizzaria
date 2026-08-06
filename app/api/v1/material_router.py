@@ -21,20 +21,21 @@ router = APIRouter()
 
 require_admin = RoleChecker(["ADMIN"])
 
-@router.get("/", response_model=list[MaterialPageResponse], status_code=status.HTTP_200_OK)
+@router.get("/", response_model=MaterialPageResponse, status_code=status.HTTP_200_OK)
 async def get_materials(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_currente_user), # type: ignore
     offset: Annotated[int, Query(ge=0)] = 0,
     limit: Annotated[int, Query(ge=1, le=100)] = 10,
     name: str | None = None
-    ) -> list[MaterialPageResponse]:
+    ) -> MaterialPageResponse:
     repository = MaterialRepository(session)
     service = MaterialService(repository)
 
     materials, total = await service.list_materials(limit, offset, name)
+    items = [MaterialResponse.model_validate(m) for m in materials]
 
-    return MaterialPageResponse(items=materials, total=total, limit=limit, offset=offset) # type: ignore
+    return MaterialPageResponse(items=items, total=total, limit=limit, offset=offset)
 
 @router.get("/{material_id}", response_model=MaterialResponse, status_code=status.HTTP_200_OK)
 async def get_material(
