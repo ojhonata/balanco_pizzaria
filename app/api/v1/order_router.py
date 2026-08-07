@@ -9,7 +9,7 @@ from app.data.db_session import get_db
 from app.models.enums import OrderStatus
 from app.models.user import User
 from app.repository.order_repository import OrderRepository
-from app.schemas.order_schema import OrderCreate, OrderResponse
+from app.schemas.order_schema import OrderCreate, OrderResponse, OrderUpdate
 from app.schemas.pagenation_schema import OrderPageResponse
 from app.service.order_service import OrderService
 
@@ -56,3 +56,15 @@ async def post_order(
     service = OrderService(repository)
 
     return await service.create_order(data, requested_by)
+
+@router.patch("/{order_id}", response_model=OrderResponse, status_code=status.HTTP_202_ACCEPTED)
+async def patch_order(
+        order_id: UUID,
+        data: OrderUpdate,
+        session: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_currente_user)
+    ):
+    repository = OrderRepository(session)
+    service = OrderService(repository)
+
+    return await service.order_update(data, order_id)

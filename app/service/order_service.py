@@ -5,7 +5,7 @@ from fastapi import HTTPException, status
 from app.models.enums import OrderStatus
 from app.models.order import Order
 from app.repository.order_repository import OrderRepository
-from app.schemas.order_schema import OrderCreate
+from app.schemas.order_schema import OrderCreate, OrderUpdate
 
 
 class OrderService:
@@ -54,3 +54,23 @@ class OrderService:
         order_data["requested_by"] = requested_by
 
         return await self.repository.create(order_data)
+
+    async def order_update(self, data: OrderUpdate, order_id: UUID) -> Order | None:
+        db_order = await self.repository.get_by_id(order_id)
+        if not db_order:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Pedido não encontrado"
+            )
+
+        if data.quantity_requested and data.quantity_requested <= 0:
+            raise HTTPException(
+                status_code = status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail="A quantidade não pode ser negativa ou zero"
+            )
+
+        order_data = data.model_dump(exclude_unset=True)
+        for key, value in order_data.items():
+            setattr(db_order, key, value)
+
+        return await self.repository.update(db_order)

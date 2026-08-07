@@ -111,7 +111,7 @@ class MaterialService:
                 )
 
         for key, value in update_data.items():
-                    setattr(db_material, key, value)
+            setattr(db_material, key, value)
 
         return await self.repository.update(db_material)
 
